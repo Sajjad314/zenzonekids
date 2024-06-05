@@ -59,7 +59,7 @@ const DetailsPage = () => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "",
-      headerTransparent: true,
+      headerTransparent: false,
 
       headerBackground: () => (
         <View
@@ -192,10 +192,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   header: {
-    backgroundColor: "#fff",
     height: 100,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: Colors.grey,
+    backgroundColor:Colors.bgColor
   },
 
   description: {

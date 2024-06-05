@@ -19,11 +19,12 @@ const Layout = () => {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Explore",
+          title: "zenzonekids",
           headerTitleStyle: {
             fontFamily: "mon-sb",
             color: "white",
           },
+          headerTitleAlign: 'center',
           headerStyle: {
             backgroundColor: Colors.bgColor,
           },

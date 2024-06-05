@@ -57,20 +57,6 @@ const Blogs = () => {
         flex: 1,
       }}
     >
-      {/* <Stack.Screen
-        options={{
-          header: () => (
-            <View style={styles.container}>
-                <TextInput
-              style={styles.searchBar}
-              placeholder="Search blogs..."
-              value={searchQuery}
-              onChangeText={handleSearch}
-            />
-            </View>
-          ),
-        }}
-      /> */}
 
       <Listings listings={blogResponse} />
     </View>
