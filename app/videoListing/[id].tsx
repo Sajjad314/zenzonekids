@@ -28,7 +28,7 @@ const DetailsPage = () => {
 
   const getVideo = (id: string) => {
     setLoading(true)
-    fetch(`https://sos-backend-00wx.onrender.com/api/videos/${id}`, {
+    fetch(`https://sos-backend-lheb.onrender.com/api/videos/${id}`, {
       method: "GET",
     })
       .then((response) => {
@@ -70,7 +70,7 @@ const DetailsPage = () => {
           style={styles.roundButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="chevron-back" size={24} color={"#000"} />
+          <Ionicons name="arrow-back-outline" size={24} color={Colors.white} />
         </TouchableOpacity>
       ),
     });
@@ -92,13 +92,14 @@ const DetailsPage = () => {
         // ref={scrollRef}
         scrollEventThrottle={16}
       >
+       {video && video.video_url &&
        <Video
         style={styles.image}
-        source={{uri: "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4"}}
+        source={{uri: video?.video_url}}
         useNativeControls
         resizeMode={ResizeMode.CONTAIN}
         isLooping
-      />
+      />}
         <View style={styles.infoContainer}>
           <Text style={styles.name}>{video?.title}</Text>
 
@@ -155,10 +156,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 50,
-    backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
-    color: Colors.primary,
+    color: Colors.white,
   },
   bar: {
     flexDirection: "row",

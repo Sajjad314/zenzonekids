@@ -12,6 +12,7 @@ import { defaultStyles } from "@/constants/Styles";
 import { useState } from "react";
 import { useSignUp } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "@/context/authContext";
 
 const Page = () => {
   const [firstName, setFirstName] = useState("");
@@ -22,86 +23,118 @@ const Page = () => {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { isLoaded, signUp, setActive } = useSignUp();
   const [showPassword, setShowPassword] = useState(false);
+  const {setAccessToken,setUserInfo,setRefreshToken,setIsLoggedIn} = useAuth();
 
-  const onSignUpPress = async () => {
-    console.log("hello", isLoaded);
+//   const onSignUpPress = async () => {
+//     console.log("hello", isLoaded);
 
-    if (!isLoaded) {
-      return;
-    }
-    setLoading(true);
+//     if (!isLoaded) {
+//       return;
+//     }
+//     setLoading(true);
 
-    try {
-      // Create the user on Clerk
-      await signUp.create({
-        firstName,
-        lastName,
-        emailAddress,
-        password,
-      });
+//     try {
+//       // Create the user on Clerk
+//       await signUp.create({
+//         firstName,
+//         lastName,
+//         emailAddress,
+//         password,
+//       });
 
-      // Send verification Email
-      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+//       // Send verification Email
+//       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
 
-      // change the UI to verify the email address
-      setPendingVerification(true);
-    } catch (err: any) {
-      alert(err.errors[0].message);
-    } finally {
-      setLoading(false);
-    }
-  };
+//       // change the UI to verify the email address
+//       setPendingVerification(true);
+//     } catch (err: any) {
+//       alert(err.errors[0].message);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
   // Verify the email address
-  const onPressVerify = async () => {
-    if (!isLoaded) {
-      return;
-    }
-    setLoading(true);
+//   const onPressVerify = async () => {
+//     if (!isLoaded) {
+//       return;
+//     }
+//     setLoading(true);
 
-    try {
-      const completeSignUp = await signUp.attemptEmailAddressVerification({
-        code,
-      });
+//     try {
+//       const completeSignUp = await signUp.attemptEmailAddressVerification({
+//         code,
+//       });
 
-      await setActive({ session: completeSignUp.createdSessionId });
-      await handleSignUp();
-      router.push("/");
-    } catch (err: any) {
-      alert(err.errors[0].message);
-    } finally {
-      setLoading(false);
-    }
-  };
+//       await setActive({ session: completeSignUp.createdSessionId });
+//       await handleSignUp();
+//       router.push("/");
+//     } catch (err: any) {
+//       alert(err.errors[0].message);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
   const handleSignUp = async () => {
-    try {
-      const response = await fetch("https://sos-backend-00wx.onrender.com/api/auth/signup", {
+    fetch("https://sos-backend-lheb.onrender.com/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: firstName + " " + lastName,
+            name: firstName + " " + lastName,
           email: emailAddress,
           password: password,
         }),
-      });
-      if (response.ok) {
-        console.log("successfull ", response);
-      } else {
-        console.error("Backend registration failed", response);
-      }
-    } catch (error) {
-      console.error("Backend registration failed", error);
-    }
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+          if(data.isSuccess){
+            setAccessToken(data.body.access_token)
+            setRefreshToken(data.body.refresh_token)
+            setUserInfo(data.body.user.email,data.body.user.role,data.body.user.name,data.body.user.id)
+            setIsLoggedIn(true)
+            setLoading(false)
+            router.push("/(tabs)")
+            setLoading(false)
+          }
+          
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          setLoading(false)
+
+        });
+    // try {
+    //   const response = await fetch("https://sos-backend-00wx.onrender.com/api/auth/signup", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       name: firstName + " " + lastName,
+    //       email: emailAddress,
+    //       password: password,
+    //     }),
+    //   });
+    //   if (response.ok) {
+    //     console.log("successfull ", response);
+    //   } else {
+    //     console.error("Backend registration failed", response);
+    //   }
+    // } catch (error) {
+    //   console.error("Backend registration failed", error);
+    // }
   };
 
   return (
     <View style={styles.container}>
-      {!pendingVerification && (
+      {/* {!pendingVerification && ( */}
         <View style={styles.container}>
           <Image
             source={require("@/assets/images/logo.png")}
@@ -142,14 +175,14 @@ const Page = () => {
         </TouchableOpacity>
       </View>
 
-          <TouchableOpacity style={defaultStyles.btn} onPress={onSignUpPress}>
+          <TouchableOpacity style={defaultStyles.btn} onPress={handleSignUp}>
             <Text style={defaultStyles.btnText}>{loading ? "Signing In..." : "Continue"}</Text>
           </TouchableOpacity>
 
           <Text style={{ color: "white", textAlign: "center", margin: 16 }}>
             Already have an account?{" "}
             <Text
-              onPress={() => router.push("/(modals)/login")}
+              onPress={() => router.push("/login")}
               style={{
                 color: "red",
                 textDecorationLine: "underline",
@@ -161,8 +194,8 @@ const Page = () => {
             to sign Up
           </Text>
         </View>
-      )}
-      {pendingVerification && (
+      {/* )} */}
+      {/* {pendingVerification && (
         <View style={styles.container}>
           <Image
             source={require("@/assets/images/logo.png")}
@@ -179,7 +212,7 @@ const Page = () => {
             <Text style={defaultStyles.btnText}>{loading ? "Verifying..." : "Verify Emai"}l</Text>
           </TouchableOpacity>
         </View>
-      )}
+      )} */}
     </View>
   );
 };

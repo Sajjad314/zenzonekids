@@ -27,7 +27,7 @@ export const renderRow: ListRenderItem<IBlogListResponse> = ({ item }) => (
             style={styles.image}
           />
           <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
+            style={{ flexDirection: "row", justifyContent: "space-between", marginHorizontal:8 }}
           >
             <Text
               style={{ fontSize: 16, fontFamily: "mon-sb", color: "white" }}
@@ -35,7 +35,7 @@ export const renderRow: ListRenderItem<IBlogListResponse> = ({ item }) => (
               {item.title}
             </Text>
           </View>
-          <Text style={{ fontFamily: "mon", color: "white" }}>
+          <Text style={{ fontFamily: "mon", color: "white" , marginHorizontal:8}}>
             {item.description}
           </Text>
           <View style={{ flexDirection: "row", gap: 4 }}></View>
@@ -48,7 +48,7 @@ export const renderRow: ListRenderItem<IBlogListResponse> = ({ item }) => (
 
   const styles = StyleSheet.create({
     listing: {
-      padding: 8,
+      // padding: 8,
       gap: 10,
       marginVertical: 16,
       backgroundColor: Colors.cardColor,

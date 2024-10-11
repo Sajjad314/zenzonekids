@@ -1,7 +1,7 @@
 import { useFonts } from "expo-font";
-import { Stack, useRouter } from "expo-router";
+import { Redirect, Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -9,6 +9,7 @@ import * as SecureStore from "expo-secure-store";
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import Constants from "expo-constants";
 import Colors from "@/constants/Colors";
+import { AuthProvider } from "@/context/authContext";
 
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 // const CLERK_FRONTEND_API = Constants.manifest.extra.clerkFrontendApi;
@@ -64,6 +65,7 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
+  
 
   return (
     <ClerkProvider
@@ -77,17 +79,77 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const { isLoaded, isSignedIn } = useAuth();
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const router = useRouter();
 
-  useEffect(() => {
-    if (isLoaded && !isSignedIn) {
-      router.push("/(modals)/login");
+  // useEffect(() => {
+  //   if (isLoaded && !isSignedIn) {
+  //     router.push("/(modals)/login");
+  //   }
+  // }, [isLoaded]);
+
+  useEffect(()=>{
+    if(!isLoggedIn){
+      router.push("/login");
     }
-  }, [isLoaded]);
+  },[isLoggedIn])
 
   return (
-    <Stack>
+    <AuthProvider>
+      <Stack>
       <Stack.Screen
+        name="home"
+        options={{
+          title: "",
+          headerTitleStyle: {
+            fontFamily: "mon-sb",
+            color:"white"
+          },
+          headerStyle: {
+            backgroundColor: Colors.bgColor,
+          },
+          headerTitleAlign: 'center', // Center the title
+          // headerLeft: () => (
+          //   <TouchableOpacity onPress={() => router.back()}>
+          //     <Ionicons name="close-outline" size={28} color={"white"}/>
+          //   </TouchableOpacity>
+          // ),
+        }}
+      />
+      <Stack.Screen
+        name="login"
+        options={{
+          title: "",
+          headerTitleStyle: {
+            fontFamily: "mon-sb",
+            color:"white"
+          },
+          headerStyle: {
+            backgroundColor: Colors.bgColor,
+          },
+          headerTitleAlign: 'center', // Center the title
+          // headerLeft: () => (
+          //   <TouchableOpacity onPress={() => router.back()}>
+          //     <Ionicons name="close-outline" size={28} color={"white"}/>
+          //   </TouchableOpacity>
+          // ),
+        }}
+      />
+      <Stack.Screen
+        name="signup"
+        options={{
+          title: "Sign Up",
+          headerTitleStyle: {
+            fontFamily: "mon-sb",
+            color:"white"
+          },
+          headerStyle: {
+            backgroundColor: Colors.bgColor,
+          },
+          headerTitleAlign: 'center',
+        }}
+      />
+      {/* <Stack.Screen
         name="(modals)/login"
         options={{
           presentation: "modal",
@@ -126,8 +188,9 @@ function RootLayoutNav() {
             </TouchableOpacity>
           ),
         }}
-      />
+      /> */}
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
     </Stack>
+    </AuthProvider>
   );
 }

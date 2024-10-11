@@ -30,7 +30,7 @@ const DetailsPage = () => {
 
   const getAllBlogs = (id: string) => {
     setLoading(true)
-    fetch(`https://sos-backend-00wx.onrender.com/api/blogs/${id}`, {
+    fetch(`https://sos-backend-lheb.onrender.com/api/blogs/${id}`, {
       method: "GET",
     })
       .then((response) => {
@@ -64,15 +64,15 @@ const DetailsPage = () => {
       headerBackground: () => (
         <View
           style={[ styles.header]}
-        ></View>
+        >
+        </View>
       ),
-
       headerLeft: () => (
         <TouchableOpacity
           style={styles.roundButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="chevron-back" size={24} color={"#000"} />
+          <Ionicons name="arrow-back-outline" size={24} color={Colors.white} />
         </TouchableOpacity>
       ),
     });
@@ -130,10 +130,9 @@ const DetailsPage = () => {
 
         <View style={styles.infoContainer}>
           <Text style={styles.name}>{listing?.title}</Text>
+          <Text style={styles.description}>{listing?.description}</Text>
 
           <View style={styles.divider} />
-
-          <Text style={styles.description}>{listing?.description}</Text>
           {listing && listing.content && <RenderHtml
             contentWidth={width} // Adjust according to your layout
             source={{ html: listing.content }}
@@ -180,10 +179,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 50,
-    backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
-    color: Colors.primary,
+    color: Colors.white,
   },
   bar: {
     flexDirection: "row",

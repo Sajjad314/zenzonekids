@@ -74,6 +74,14 @@ const Layout = () => {
       <Tabs.Screen
         name="profile"
         options={{
+          title: "Profile",
+          headerTitleStyle: {
+            fontFamily: "mon-sb",
+            color: "white",
+          },
+          headerStyle: {
+            backgroundColor: Colors.bgColor,
+          },
           tabBarLabelPosition: "below-icon",
           tabBarLabel: "Profile",
           tabBarIcon: ({ color, size }) => (

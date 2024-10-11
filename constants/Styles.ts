@@ -42,4 +42,31 @@ export const defaultStyles = StyleSheet.create({
     borderTopColor: Colors.grey,
     borderTopWidth: StyleSheet.hairlineWidth,
   },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: Colors.primaryText,
+    marginBottom: 20,
+    textAlign: "center"
+  },
+  profileContainer: {
+    backgroundColor: Colors.cardBg,
+    padding: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+  label: {
+    fontSize: 16,
+    color: Colors.labelText,
+    marginBottom: 5,
+    fontWeight: '500',
+  },
+  value: {
+    fontSize: 18,
+    color: Colors.valueText,
+    marginBottom: 15,
+  },
 });

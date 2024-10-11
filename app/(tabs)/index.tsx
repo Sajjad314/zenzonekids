@@ -7,14 +7,17 @@ import Colors from "@/constants/Colors";
 import { LastReadCard } from "@/components/Blog/LastReadBlogCard";
 import { IVideoResponse } from "@/interfaces/videos/videoResponse";
 import { VideoItem } from "@/components/videos/VideoItem";
+import { useAuth } from "@/context/authContext";
 
 const Page = () => {
   const [blogResponse, setBloResponse] = useState<IBlogListResponse[]>([]);
   const [lastRead, setLastRead] = useState<IBlogListResponse>();
   const [lastWatched, setLastWatched] = useState<IVideoResponse>();
+  const { accessToken, email, id, isLoggedIn, name, refreshToken, role } =
+    useAuth();
 
-  const getAllBlogs = () => {
-    fetch("https://sos-backend-00wx.onrender.com/api/blogs", {
+  const getFeaturedBlogs = () => {
+    fetch("https://sos-backend-lheb.onrender.com/api/blogs", {
       method: "GET",
     })
       .then((response) => {
@@ -34,8 +37,8 @@ const Page = () => {
       });
   };
 
-  const getAllVideos = () => {
-    fetch("https://sos-backend-00wx.onrender.com/api/videos", {
+  const getFeaturedVideos = () => {
+    fetch("https://sos-backend-lheb.onrender.com/api/videos/featured", {
       method: "GET",
     })
       .then((response) => {
@@ -55,8 +58,19 @@ const Page = () => {
   };
 
   useEffect(() => {
-    getAllBlogs();
-    getAllVideos();
+    console.log(
+      "aaa",
+      accessToken,
+      email,
+      id,
+      isLoggedIn,
+      name,
+      refreshToken,
+      role
+    );
+
+    getFeaturedBlogs();
+    getFeaturedVideos();
   }, []);
 
   useEffect(() => {
@@ -67,10 +81,12 @@ const Page = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Featured Blogs</Text>
-        <Listings listings={blogResponse} />
-      </View>
+      {blogResponse.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionHeader}>Featured Blogs</Text>
+          <Listings listings={blogResponse} />
+        </View>
+      )}
       {lastRead && (
         <View style={styles.section}>
           <Text style={styles.sectionHeader}>Last Read</Text>
