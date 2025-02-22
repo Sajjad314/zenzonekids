@@ -65,7 +65,6 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
-  
 
   return (
     <ClerkProvider
@@ -79,7 +78,7 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const { isLoaded, isSignedIn } = useAuth();
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
 
   // useEffect(() => {
@@ -88,109 +87,69 @@ function RootLayoutNav() {
   //   }
   // }, [isLoaded]);
 
-  useEffect(()=>{
-    if(!isLoggedIn){
+  useEffect(() => {
+    if (!isLoggedIn) {
       router.push("/login");
     }
-  },[isLoggedIn])
+  }, [isLoggedIn]);
 
   return (
     <AuthProvider>
       <Stack>
-      <Stack.Screen
-        name="home"
-        options={{
-          title: "",
-          headerTitleStyle: {
-            fontFamily: "mon-sb",
-            color:"white"
-          },
-          headerStyle: {
-            backgroundColor: Colors.bgColor,
-          },
-          headerTitleAlign: 'center', // Center the title
-          // headerLeft: () => (
-          //   <TouchableOpacity onPress={() => router.back()}>
-          //     <Ionicons name="close-outline" size={28} color={"white"}/>
-          //   </TouchableOpacity>
-          // ),
-        }}
-      />
-      <Stack.Screen
-        name="login"
-        options={{
-          title: "",
-          headerTitleStyle: {
-            fontFamily: "mon-sb",
-            color:"white"
-          },
-          headerStyle: {
-            backgroundColor: Colors.bgColor,
-          },
-          headerTitleAlign: 'center', // Center the title
-          // headerLeft: () => (
-          //   <TouchableOpacity onPress={() => router.back()}>
-          //     <Ionicons name="close-outline" size={28} color={"white"}/>
-          //   </TouchableOpacity>
-          // ),
-        }}
-      />
-      <Stack.Screen
-        name="signup"
-        options={{
-          title: "Sign Up",
-          headerTitleStyle: {
-            fontFamily: "mon-sb",
-            color:"white"
-          },
-          headerStyle: {
-            backgroundColor: Colors.bgColor,
-          },
-          headerTitleAlign: 'center',
-        }}
-      />
-      {/* <Stack.Screen
-        name="(modals)/login"
-        options={{
-          presentation: "modal",
-          title: "Log in",
-          headerTitleStyle: {
-            fontFamily: "mon-sb",
-            color:"white"
-          },
-          headerStyle: {
-            backgroundColor: Colors.bgColor,
-          },
-          headerTitleAlign: 'center', // Center the title
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()}>
-              <Ionicons name="close-outline" size={28} color={"white"}/>
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <Stack.Screen
-        name="(modals)/signup"
-        options={{
-          presentation: "modal",
-          title: "Sign Up",
-          headerTitleStyle: {
-            fontFamily: "mon-sb",
-            color:"white"
-          },
-          headerStyle: {
-            backgroundColor: Colors.bgColor,
-          },
-          headerTitleAlign: 'center',
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()}>
-              <Ionicons name="close-outline" size={28} />
-            </TouchableOpacity>
-          ),
-        }}
-      /> */}
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-    </Stack>
+        <Stack.Screen
+          name="home"
+          options={{
+            title: "",
+            headerTitleStyle: {
+              fontFamily: "mon-sb",
+              color: "white",
+            },
+            headerStyle: {
+              backgroundColor: Colors.bgColor,
+            },
+            headerTitleAlign: "center", // Center the title
+            // headerLeft: () => (
+            //   <TouchableOpacity onPress={() => router.back()}>
+            //     <Ionicons name="close-outline" size={28} color={"white"}/>
+            //   </TouchableOpacity>
+            // ),
+          }}
+        />
+        <Stack.Screen
+          name="login"
+          options={{
+            title: "",
+            headerTitleStyle: {
+              fontFamily: "mon-sb",
+              color: "white",
+            },
+            headerStyle: {
+              backgroundColor: Colors.bgColor,
+            },
+            headerTitleAlign: "center", // Center the title
+            // headerLeft: () => (
+            //   <TouchableOpacity onPress={() => router.back()}>
+            //     <Ionicons name="close-outline" size={28} color={"white"}/>
+            //   </TouchableOpacity>
+            // ),
+          }}
+        />
+        <Stack.Screen
+          name="signup"
+          options={{
+            title: "Sign Up",
+            headerTitleStyle: {
+              fontFamily: "mon-sb",
+              color: "white",
+            },
+            headerStyle: {
+              backgroundColor: Colors.bgColor,
+            },
+            headerTitleAlign: "center",
+          }}
+        />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
     </AuthProvider>
   );
 }

@@ -1,5 +1,5 @@
 import Colors from "@/constants/Colors";
-import { IBlogListResponse } from "@/interfaces/blog/blogResponse";
+import { IBlogListResponse } from "@/interfaces/table/tableResponse";
 import { Link } from "expo-router";
 import {
   View,

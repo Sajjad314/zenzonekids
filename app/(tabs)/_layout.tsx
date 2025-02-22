@@ -19,7 +19,7 @@ const Layout = () => {
       <Tabs.Screen
         name="index"
         options={{
-          title: "zenzonekids",
+          title: "Easy Biller",
           headerTitleStyle: {
             fontFamily: "mon-sb",
             color: "white",
@@ -38,7 +38,7 @@ const Layout = () => {
       <Tabs.Screen
         name="blogs"
         options={{
-          title: "Blogs",
+          title: "Tables",
           headerTitleStyle: {
             fontFamily: "mon-sb",
             color: "white",

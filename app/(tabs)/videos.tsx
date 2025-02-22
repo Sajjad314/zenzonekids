@@ -1,111 +1,241 @@
-import VideoList from "@/components/videos/VideoList";
 import Colors from "@/constants/Colors";
-import { IVideoResponse } from "@/interfaces/videos/videoResponse";
+import { defaultStyles } from "@/constants/Styles";
 import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  FlatList,
-  StyleSheet,
-  Dimensions,
   TextInput,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
+import { collection, addDoc, getDocs } from "firebase/firestore";
+import { db } from "../../firebase";
 
 const Videos = () => {
-  const [videosResponse, setVideosResponse] = useState<IVideoResponse[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [menuItems, setMenuItems] = useState<
+    { _id: string; name: string; price: string }[]
+  >([]);
+  const [newItem, setNewItem] = useState({ name: "", price: "" });
+  const [loading, setLoading] = useState(false);
+  const [addStatus, setAddStatus] = useState(false);
 
-  const getAllVideos = () => {
-    fetch("https://sos-backend-lheb.onrender.com/api/videos", {
-      method: "GET",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok " + response.statusText);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setVideosResponse(data.body);
-        console.log(data.body);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        console.log(error);
-      });
+  const handleAddItem = () => {
+    setAddStatus(true);
+    if (!newItem.name || !newItem.price) {
+      Alert.alert("Error", "Please enter both name and price.");
+      return;
+    }
+
+    const addMenuItem = async () => {
+      try {
+        const docRef = await addDoc(collection(db, "Menu"), newItem);
+        console.log("Menu item added!", docRef.id);
+        setMenuItems([...menuItems, { _id :docRef.id, name:newItem.name, price: newItem.price}])
+      } catch (error) {
+        console.error("Error adding menu item:", error);
+      } finally {
+        setAddStatus(false);
+      }
+    };
+    addMenuItem();
+    setNewItem({ name: "", price: "" });
   };
 
-  const handleSearch = () => {
-    fetch(
-      `https://sos-backend-lheb.onrender.com/api/videos/search/${searchQuery}`,
-      {
-        method: "GET",
-      }
-    )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok " + response.statusText);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setVideosResponse(data.body);
-        console.log(data.body);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        console.log(error);
+  const handleDeleteItem = (id: string) => {
+    setMenuItems(menuItems.filter((item) => item._id !== id));
+  };
+
+  const handleEditPrice = (id: string, newPrice: string) => {
+    const updatedMenuItems = menuItems.map((item) =>
+      item._id === id ? { ...item, price: newPrice } : item
+    );
+    setMenuItems(updatedMenuItems);
+  };
+
+  const getMenuItems = async () => {
+    setLoading(true);
+    try {
+      const querySnapshot = await getDocs(collection(db, "Menu"));
+      let updatedItemsArray: { _id: string; name: string; price: string }[] =
+        [];
+
+      querySnapshot.forEach((doc) => {
+        console.log(doc.id + "=> " + doc.data().name);
+
+        updatedItemsArray.push({
+          _id: doc.id + doc.data().name,
+          name: doc.data().name,
+          price: doc.data().price,
+        });
       });
+      setMenuItems(updatedItemsArray);
+    } catch (error) {
+      console.error("Error fetching menu items:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    getAllVideos();
+    setMenuItems([]);
+    getMenuItems();
   }, []);
 
-  useEffect(() => {
-    if (searchQuery.length === 0) {
-      getAllVideos();
-    } else {
-      handleSearch();
-    }
-  }, [searchQuery]);
+  const renderMenuItem = ({ item }: any) => (
+    <View style={styles.menuItem}>
+      <Text style={styles.itemText}>{item.name}</Text>
+      <TouchableOpacity
+        style={styles.priceButton}
+        onPress={() => {
+          Alert.prompt(
+            "Edit Price",
+            `Enter a new price for ${item.name}:`,
+            [
+              {
+                text: "Cancel",
+                style: "cancel",
+              },
+              {
+                text: "Save",
+                onPress: (price) => handleEditPrice(item._id, price!),
+              },
+            ],
+            "plain-text",
+            item.price.toString()
+          );
+        }}
+      >
+        <Text style={styles.itemText}>${item.price}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => handleDeleteItem(item._id)}
+      >
+        <Text style={styles.deleteText}>Delete</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
-    <View
-      style={{
-        backgroundColor: Colors.dark,
-        height: 100,
-        flex: 1,
-      }}
-    >
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Search Videos..."
-          placeholderTextColor={Colors.white}
-          value={searchQuery}
-          onChangeText={(text) => setSearchQuery(text)} // Update search query state
-        />
-      </View>
-      <VideoList videoResponse={videosResponse} />
+    <View style={styles.container}>
+      {loading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color={Colors.primary} />
+          <Text style={styles.loadingText}>Loading...</Text>
+        </View>
+      )}
+      {!loading && (
+        <>
+          <View style={styles.addItemSection}>
+            <TextInput
+              style={[defaultStyles.inputField, { marginBottom: 15 }]}
+              placeholder="Item Name"
+              value={newItem.name}
+              onChangeText={(text) => setNewItem({ ...newItem, name: text })}
+            />
+            <TextInput
+              style={[defaultStyles.inputField, { marginBottom: 15 }]}
+              placeholder="Price"
+              keyboardType="numeric"
+              value={newItem.price}
+              onChangeText={(text) => setNewItem({ ...newItem, price: text })}
+            />
+            <TouchableOpacity style={defaultStyles.btn} onPress={handleAddItem}>
+              {addStatus ? (
+                <ActivityIndicator size="large" color={Colors.white} />
+              ) : (
+                <Text style={styles.addButtonText}>Add Item</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {/* Menu List Section */}
+          <FlatList
+            data={menuItems}
+            keyExtractor={(item) => item._id}
+            renderItem={renderMenuItem}
+            contentContainerStyle={styles.menuList}
+          />
+        </>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  searchContainer: {
+  container: {
+    flex: 1,
     backgroundColor: Colors.bgColor,
-    paddingVertical: 10, // Adds some padding around the search bar
+    padding: 10,
   },
-  searchBar: {
-    height: 40,
-    borderColor: Colors.white,
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 10,
+    color: "#fff",
+    fontSize: 18,
+  },
+  addItemSection: {
+    marginBottom: 20,
+  },
+  input: {
     borderWidth: 1,
-    borderRadius: 16,
-    paddingLeft: 12,
-    backgroundColor: Colors.bgColor,
-    color: Colors.white,
-    marginHorizontal: 15, // Adjust as needed for spacing
+    borderColor: "#ddd",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    backgroundColor: "#fff",
+  },
+  addButton: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  addButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  menuList: {
+    paddingBottom: 20,
+  },
+  menuItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  itemText: {
+    fontSize: 16,
+    flex: 1,
+  },
+  priceButton: {
+    padding: 5,
+    backgroundColor: "#E8F0FE",
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  deleteButton: {
+    padding: 5,
+    backgroundColor: "#FF4C4C",
+    borderRadius: 5,
+  },
+  deleteText: {
+    color: "#fff",
+    fontSize: 14,
   },
 });
 

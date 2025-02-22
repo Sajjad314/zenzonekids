@@ -7,11 +7,11 @@ import {
 } from "react-native";
 import {useRef, useState } from "react";
 import Colors from "@/constants/Colors";
-import { IBlogListResponse } from "@/interfaces/blog/blogResponse";
+import { ITableListResponse } from "@/interfaces/table/tableResponse";
 import { renderRow } from "./RenderRow";
 
 interface Props {
-  listings: IBlogListResponse[];
+  listings: string[];
 }
 
 
@@ -27,7 +27,7 @@ const Listings = ({ listings: items }: Props) => {
         renderItem={renderRow}
         data={loading ? [] : items}
         ref={listRef}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item}
         numColumns={2}
         columnWrapperStyle={styles.row}
       />

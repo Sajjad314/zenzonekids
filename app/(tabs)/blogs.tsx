@@ -2,70 +2,56 @@ import { View, Text, TextInput, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
 import Colors from "@/constants/Colors";
 import Listings from "@/components/Blog/BlogList";
-import { IBlogListResponse } from "@/interfaces/blog/blogResponse";
+import { ITableListResponse } from "@/interfaces/table/tableResponse";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebase";
 
 const Blogs = () => {
-  const [blogResponse, setBloResponse] = useState<IBlogListResponse[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const getAllBlogs = () => {
-    console.log("here");
+  const [tableResponse, setTableResponse] = useState<string[]>(["1","2","3","4","5","6","7","8","9","10"]);
+  // const getAllBlogs = () => {
+  //   console.log("here");
 
-    fetch("https://sos-backend-lheb.onrender.com/api/blogs", {
-      method: "GET",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok " + response.statusText);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setBloResponse(data.body);
-        console.log(data.body);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        console.log(error);
-      });
-  };
+  //   fetch("https://sos-backend-lheb.onrender.com/api/blogs", {
+  //     method: "GET",
+  //   })
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error("Network response was not ok " + response.statusText);
+  //       }
+  //       return response.json();
+  //     })
+  //     .then((data) => {
+  //       setTableResponse(data.body);
+  //       console.log(data.body);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error:", error);
+  //       console.log(error);
+  //     });
+  // };
 
-  const handleSearch = () => {
-    console.log("here");
+  
 
-    fetch(
-      `https://sos-backend-lheb.onrender.com/api/blogs/search/${searchQuery}`,
-      {
-        method: "GET",
-      }
-    )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok " + response.statusText);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setBloResponse(data.body);
-        console.log(data.body);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        console.log(error);
-      });
-  };
+  // useEffect(() => {
+  //   getAllBlogs();
+  //   console.log("hello");
+  // }, []);
 
   useEffect(() => {
-    getAllBlogs();
-    console.log("hello");
+    const fetchData = async () => {
+      const querySnapshot = await getDocs(collection(db, "testCollection"));
+      querySnapshot.forEach((doc) => {
+        console.log(doc.id, "=>", doc.data());
+      });
+      console.log();
+      
+    };
+    console.log("llllllllllllllllllllllllllllllllllllllllllllllllllllllll");
+    
+
+    fetchData();
   }, []);
 
-  useEffect(() => {
-    if (searchQuery.length === 0) {
-      getAllBlogs();
-    } else {
-      handleSearch();
-    }
-  }, [searchQuery]);
   return (
     <View
       style={{
@@ -74,16 +60,16 @@ const Blogs = () => {
         flex: 1,
       }}
     >
-      <View style={styles.searchContainer}>
+      {/* <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchBar}
           placeholder="Search blogs..."
           placeholderTextColor={Colors.white}
           value={searchQuery}
-          onChangeText={(text) => setSearchQuery(text)} // Update search query state
+          onChangeText={(text) => setSearchQuery(text)}
         />
-      </View>
-      <Listings listings={blogResponse} />
+      </View> */}
+      <Listings listings={tableResponse} />
     </View>
   );
 };
@@ -103,7 +89,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     backgroundColor: Colors.bgColor,
-    paddingVertical: 10, // Adds some padding around the search bar
+    paddingVertical: 10,
   },
   searchBar: {
     height: 40,
@@ -113,7 +99,7 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     backgroundColor: Colors.bgColor,
     color: Colors.white,
-    marginHorizontal: 15, // Adjust as needed for spacing
+    marginHorizontal: 15,
   },
 });
 

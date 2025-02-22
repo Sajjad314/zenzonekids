@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1053378303799",
+    "project_id": "restaurant-bill-29886",
+    "storage_bucket": "restaurant-bill-29886.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1053378303799:android:5ac33db23e15aa36c46cb2",
+        "android_client_info": {
+          "package_name": "com.sajjad.biller"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqf8ueDfP-qd6dCQIEWsPryWUN6yTWLeo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
